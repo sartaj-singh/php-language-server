@@ -40,6 +40,13 @@ class ComposerScripts
                     break;
                 }
             }
+            $sphpLocation = null;
+            foreach ([__DIR__ . '/../../../sartajphp/sartajphp/res', __DIR__ . '/../vendor/sartajphp/sartajphp/res'] as $dir2) {
+                if (file_exists($dir2)) {
+                    $sphpLocation = Path::canonicalize($dir2);
+                    break;
+                }
+            }
             if (!$stubsLocation) {
                 throw new \Exception('jetbrains/phpstorm-stubs package not found');
             }
@@ -47,6 +54,7 @@ class ComposerScripts
             $uris = yield $finder->find("$stubsLocation/**/*.php");
 
             $uris = array_merge($uris, yield $finder->find(__DIR__ . '/../extra_stubs/*.php'));
+            $uris = array_merge($uris, yield $finder->find("$sphpLocation/**/*.php"));
 
             foreach ($uris as $uri) {
                 echo "Parsing $uri\n";
